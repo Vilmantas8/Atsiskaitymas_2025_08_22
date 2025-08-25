@@ -1,0 +1,330 @@
+<%- include('partials/header'); -%>
+
+<h1 class="title">Programuotojai API</h1>
+<div id="homepage">
+    <h2>Surask programuotoją šalia savęs!</h2>
+    <div id="devs"></div>
+</div>
+
+<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+<script src="https://unpkg.com/react@15/dist/react.js"></script>
+<script src="https://unpkg.com/react-dom@15/dist/react-dom.min.js"></script>
+
+<!-- Create React Component -->
+<script type="text/babel">
+    var Devs = React.createClass({
+        getInitialState: function(){
+            return({
+                devs: [],
+                showAddForm: false,
+                editingDev: null,
+                formData: {
+                    vardas: '',
+                    tech: '',
+                    laisvas: false,
+                    lng: '',
+                    lat: ''
+                }
+            });
+        },
+        
+        render: function() {
+            var devs = this.state.devs;
+            var self = this;
+            
+            devs = devs.map(function(dev, index) {
+                return (
+                    <li key={index}>
+                        <span className={dev.laisvas ? 'free' : 'busy'}></span>
+                        <span className="name">{dev.vardas}</span>
+                        <span className="rank">{dev.tech.join(', ')}</span>
+                        <span className="dist">{Math.floor(dev.distance / 1000)} km</span>
+                        <button className="edit-btn" onClick={() => self.handleEdit(dev)}>Redaguoti</button>
+                        <button className="delete-btn" onClick={() => self.handleDelete(dev._id)}>Ištrinti</button>
+                    </li>
+                );
+            });
+
+            return (
+                <div id="dev-container">
+                    {/* Paieškos forma */}
+                    <form id="search" onSubmit={this.handleSubmit}>
+                        <h3>Ieškoti programuotojų</h3>
+                        <label>Ilguma:</label>
+                        <input type="number" step="any" ref="lng" placeholder="pvz: 54.68916" required />
+                        <label>Platuma:</label>
+                        <input type="number" step="any" ref="lat" placeholder="pvz: 25.2798" required />
+                        <input type="submit" value="Rasti programuotojus" />
+                    </form>
+                    
+                    {/* Mygtukas pridėti naują programuotoją */}
+                    <div style={{textAlign: 'center', margin: '20px 0'}}>
+                        <button 
+                            onClick={this.toggleAddForm}
+                            style={{
+                                background: '#4CAF50',
+                                padding: '10px 20px',
+                                fontSize: '16px',
+                                borderRadius: '4px',
+                                border: 'none',
+                                color: 'white',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            {this.state.showAddForm ? 'Atšaukti' : 'Pridėti naują programuotoją'}
+                        </button>
+                    </div>
+                    
+                    {/* Pridėjimo/Redagavimo forma */}
+                    {(this.state.showAddForm || this.state.editingDev) && (
+                        <form className="dev-form" onSubmit={this.handleSaveDev}>
+                            <h3>{this.state.editingDev ? 'Redaguoti programuotoją' : 'Pridėti naują programuotoją'}</h3>
+                            
+                            <label>Vardas:</label>
+                            <input 
+                                type="text" 
+                                name="vardas"
+                                value={this.state.formData.vardas}
+                                onChange={this.handleInputChange}
+                                placeholder="Įveskite vardą" 
+                                required 
+                            />
+                            
+                            <label>Technologijos (atskirtos kableliais):</label>
+                            <input 
+                                type="text" 
+                                name="tech"
+                                value={this.state.formData.tech}
+                                onChange={this.handleInputChange}
+                                placeholder="pvz: JavaScript, React, Node.js" 
+                                required 
+                            />
+                            
+                            <label style={{display: 'flex', alignItems: 'center', margin: '10px 0'}}>
+                                <input 
+                                    type="checkbox" 
+                                    name="laisvas"
+                                    checked={this.state.formData.laisvas}
+                                    onChange={this.handleCheckboxChange}
+                                    style={{width: 'auto', margin: '0 10px 0 0'}}
+                                />
+                                Laisvas
+                            </label>
+                            
+                            <label>Ilguma:</label>
+                            <input 
+                                type="number" 
+                                step="any"
+                                name="lng"
+                                value={this.state.formData.lng}
+                                onChange={this.handleInputChange}
+                                placeholder="pvz: 54.68916" 
+                                required 
+                            />
+                            
+                            <label>Platuma:</label>
+                            <input 
+                                type="number" 
+                                step="any"
+                                name="lat"
+                                value={this.state.formData.lat}
+                                onChange={this.handleInputChange}
+                                placeholder="pvz: 25.2798" 
+                                required 
+                            />
+                            
+                            <div style={{display: 'flex', gap: '10px', justifyContent: 'center'}}>
+                                <input 
+                                    type="submit" 
+                                    value={this.state.editingDev ? 'Atnaujinti' : 'Pridėti'} 
+                                    style={{background: '#4CAF50'}}
+                                />
+                                <button 
+                                    type="button"
+                                    onClick={this.cancelForm}
+                                    style={{
+                                        background: '#f44336',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '10px',
+                                        fontSize: '18px',
+                                        width: '200px',
+                                        cursor: 'pointer',
+                                        borderRadius: '4px'
+                                    }}
+                                >
+                                    Atšaukti
+                                </button>
+                            </div>
+                        </form>
+                    )}
+                    
+                    {/* Programuotojų sąrašas */}
+                    <h3>Rasti programuotojai:</h3>
+                    <ul>{devs}</ul>
+                </div>
+            );
+        },
+        
+        handleInputChange: function(e) {
+            var formData = this.state.formData;
+            formData[e.target.name] = e.target.value;
+            this.setState({ formData: formData });
+        },
+        
+        handleCheckboxChange: function(e) {
+            var formData = this.state.formData;
+            formData[e.target.name] = e.target.checked;
+            this.setState({ formData: formData });
+        },
+        
+        toggleAddForm: function() {
+            this.setState({ 
+                showAddForm: !this.state.showAddForm,
+                editingDev: null,
+                formData: {
+                    vardas: '',
+                    tech: '',
+                    laisvas: false,
+                    lng: '',
+                    lat: ''
+                }
+            });
+        },
+        
+        handleEdit: function(dev) {
+            this.setState({
+                editingDev: dev,
+                showAddForm: false,
+                formData: {
+                    vardas: dev.vardas,
+                    tech: dev.tech.join(', '),
+                    laisvas: dev.laisvas,
+                    lng: dev.location.coordinates[0],
+                    lat: dev.location.coordinates[1]
+                }
+            });
+        },
+        
+        cancelForm: function() {
+            this.setState({
+                showAddForm: false,
+                editingDev: null,
+                formData: {
+                    vardas: '',
+                    tech: '',
+                    laisvas: false,
+                    lng: '',
+                    lat: ''
+                }
+            });
+        },
+        
+        handleSaveDev: function(e) {
+            e.preventDefault();
+            
+            var techArray = this.state.formData.tech.split(',').map(function(tech) {
+                return tech.trim();
+            });
+            
+            var devData = {
+                vardas: this.state.formData.vardas,
+                tech: techArray,
+                laisvas: this.state.formData.laisvas,
+                location: {
+                    type: 'Point',
+                    coordinates: [
+                        parseFloat(this.state.formData.lng),
+                        parseFloat(this.state.formData.lat)
+                    ]
+                }
+            };
+            
+            var url = '/api/programuotojai';
+            var method = 'POST';
+            
+            if (this.state.editingDev) {
+                url = '/api/programuotojai/' + this.state.editingDev._id;
+                method = 'PUT';
+            }
+            
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(devData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Klaida išsaugant duomenis');
+                }
+                return response.json();
+            })
+            .then(json => {
+                alert(this.state.editingDev ? 'Programuotojas atnaujintas!' : 'Programuotojas pridėtas!');
+                this.cancelForm();
+                // Atnaujinti sąrašą, jei yra koordinatės
+                if (this.refs.lng && this.refs.lng.value && this.refs.lat && this.refs.lat.value) {
+                    this.handleSubmit(e);
+                }
+            })
+            .catch(error => {
+                console.error('Klaida:', error);
+                alert('Įvyko klaida: ' + error.message);
+            });
+        },
+        
+        handleDelete: function(id) {
+            if (confirm('Ar tikrai norite ištrinti šį programuotoją?')) {
+                fetch('/api/programuotojai/' + id, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Klaida trinant programuotoją');
+                    }
+                    return response.json();
+                })
+                .then(json => {
+                    alert('Programuotojas ištrintas!');
+                    // Atnaujinti sąrašą
+                    var newDevs = this.state.devs.filter(function(dev) {
+                        return dev._id !== id;
+                    });
+                    this.setState({ devs: newDevs });
+                })
+                .catch(error => {
+                    console.error('Klaida:', error);
+                    alert('Įvyko klaida trinant: ' + error.message);
+                });
+            }
+        },
+
+        handleSubmit: function(e) {
+            e.preventDefault();
+            var lng = this.refs.lng.value;
+            var lat = this.refs.lat.value;
+
+            fetch('/api/programuotojai/?lng=' + lng + '&lat=' + lat)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(json => {
+                    this.setState({
+                        devs: json
+                    });
+                    console.log(json);
+                })
+                .catch(error => {
+                    console.error('Error during fetch:', error);
+                });
+        }
+    });
+    ReactDOM.render(<Devs />, document.getElementById('devs'));
+</script>
+
+<%- include('partials/footer'); -%>

@@ -1,0 +1,153 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700&display=swap');
+
+body{
+    font-family: Raleway;
+    color: #555;
+    background: #ff5252;
+    margin: 10px 30px;
+}
+#homepage{
+    max-width: 800px;
+    margin: 60px auto;
+    padding: 10px 20px;
+    background: #fdfdfd;
+    border-radius: 4px;
+    box-shadow: 1px 2px 3px rgba(0,0,0,0.2);
+}
+input[type="number"], input[type="text"]{
+    display: block;
+    width: 300px;
+    margin: 20px 0;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+label{
+    font-weight: bold;
+}
+.title{
+    color: #fff;
+    text-align: center;
+    font-size: 48px;
+}
+#homepage h2{
+    text-align: center;
+}
+#homepage h3{
+    text-align: center;
+    color: #333;
+    margin-top: 30px;
+}
+form{
+    max-width: 350px;
+    margin: 30px auto;
+}
+form#search {
+    border-bottom: 2px solid #eee;
+    padding-bottom: 30px;
+}
+.dev-form {
+    background: #f5f5f5;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px auto;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+input[type="submit"]{
+    background: #555;
+     color: #fff;
+     border: 0;
+     padding: 10px;
+     font-size: 18px;
+     width: 200px;
+     margin: 0 auto;
+     display: block;
+     cursor: pointer;
+     border-radius: 4px;
+ }
+ input[type="submit"]:hover{
+     background: #333;
+ }
+ul{
+    margin: 0;
+    padding: 0;
+}
+li{
+    padding: 15px;
+    background: #eee;
+    list-style-type: none;
+    font-size: 18px;
+    font-weight: bold;
+    margin: 10px 0;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+li:hover{
+    background: #e0e0e0;
+}
+span{
+    display: inline-block;
+    margin: 0 10px;
+}
+span.name{
+    color: #333;
+    min-width: 150px;
+}
+span.rank{
+    flex-grow: 1;
+    color: #666;
+    font-weight: normal;
+}
+span.dist{
+    color: green;
+    min-width: 80px;
+    text-align: right;
+}
+span.free{
+    border-radius: 10px;
+    width: 10px;
+    height: 10px;
+    background: green;
+}
+span.busy{
+    border-radius: 10px;
+    width: 10px;
+    height: 10px;
+    background: #ff5252;
+}
+button{
+    background: #2196F3;
+    border: 0;
+    padding: 8px 15px;
+    color: #fff;
+    display: inline-block;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 0 5px;
+    font-size: 14px;
+    font-weight: 600;
+}
+button:hover{
+    opacity: 0.9;
+}
+.edit-btn{
+    background: #FFC107;
+    color: #333;
+}
+.edit-btn:hover{
+    background: #FFB300;
+}
+.delete-btn{
+    background: #f44336;
+}
+.delete-btn:hover{
+    background: #d32f2f;
+}
+button.false{display: none;}
+input[type="checkbox"]{
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
